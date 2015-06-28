@@ -46,7 +46,6 @@ public class Server
 		new Thread( ()->{
 			while(true)
 			{
-				//LinkedList<String> messages = new LinkedList<>();
 				Socket[] socketArray = new Socket[sockets.size()];
 				for(Socket s : sockets.toArray(socketArray))
 				{
@@ -58,10 +57,7 @@ public class Server
 							if(socket != s)
 								sendMessage(socket, message);
 					}
-				}/*
-				for(String s : messages)
-					for(Socket socket : sockets)
-						sendMessage(socket, s);*/
+				}
 			}
 		}).start();
 	}
