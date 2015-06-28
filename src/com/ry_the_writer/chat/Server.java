@@ -46,16 +46,16 @@ public class Server
 		new Thread( ()->{
 			while(true)
 			{
-				Socket[] socketArray = new Socket[sockets.size()];
-				for(Socket s : sockets.toArray(socketArray))
+				for(Socket s : sockets)
 				{
 					String message = checkMessages(s);
 					if(message != null)
 					{
 						//messages.add(message);
-						for(Socket socket : socketArray)
+						for(Socket socket : sockets)
 							if(socket != s)
 								sendMessage(socket, message);
+						System.out.println(message);
 					}
 				}
 			}
@@ -69,9 +69,12 @@ public class Server
 			messageBytes[i] = (byte)message.charAt(i);
 		try
 		{
-			BufferedOutputStream out = new BufferedOutputStream(socket.getOutputStream());
-			out.write(messageBytes);
-			out.flush();
+			if(socket.isConnected())
+			{
+				BufferedOutputStream out = new BufferedOutputStream(socket.getOutputStream());
+				out.write(messageBytes);
+				out.flush();
+			}
 		}
 		catch(IOException e)
 		{
@@ -85,15 +88,18 @@ public class Server
 		//Read message data
 		try
 		{
-			InputStream reader = socket.getInputStream();
-			if(reader.available() > 0)
+			if(socket.isConnected())
 			{
-				int length = reader.read();
-				if(length != - 1)
+				InputStream reader = socket.getInputStream();
+				if(reader.available() > 0)
 				{
-					byte[] b = new byte[length];
-					reader.read(b);
-					message = new String(b);
+					int length = reader.read();
+					if(length != - 1)
+					{
+						byte[] b = new byte[length];
+						reader.read(b);
+						message = new String(b);
+					}
 				}
 			}
 		}
