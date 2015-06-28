@@ -55,12 +55,15 @@ public class Client
 		try
 		{
 			BufferedInputStream reader;
-			reader = new BufferedInputStream(socket.getInputStream());
-			if(reader.available() > 0)
-				message = "";
-			while(reader.available() > 0)
+			if(socket.isConnected())
 			{
-				message += (char)reader.read();
+				reader = new BufferedInputStream(socket.getInputStream());
+				if(reader.available() > 0)
+					message = "";
+				while(reader.available() > 0)
+				{
+					message += (char)reader.read();
+				}
 			}
 		}
 		catch (IOException e)
@@ -90,9 +93,12 @@ public class Client
 			messageBytes[i] = (byte)message.charAt(i);
 		try
 		{
-			OutputStream out = socket.getOutputStream();
-			out.write(message.length());
-			out.write(message.getBytes());
+			if(socket.isConnected())
+			{
+				OutputStream out = socket.getOutputStream();
+				out.write(message.length());
+				out.write(message.getBytes());
+			}
 		}
 		catch(IOException e)
 		{
